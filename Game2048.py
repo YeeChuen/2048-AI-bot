@@ -1,3 +1,5 @@
+# possible game problem, spawn location incorrect
+
 import sys
 import os
 import numpy as np
@@ -149,6 +151,13 @@ class State2048:
         for r in range(4):
             h = h + hash(tuple(np.rot90(self.board, r).reshape(np.prod(self.board.shape))))
         return h % sys.maxsize
+
+    def h1(self):
+        return self.score
+
+    def h2(self):
+        # mean the board numbers
+        return np.mean(self.board)
 
 #Output to use in machine learning
 def getStateToInput(state):
