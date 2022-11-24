@@ -73,8 +73,8 @@ def MCTSplay():
         count+=1
 
     state.print()
-    print("Game Over, AI scored")
-    print(state.score)
+    print("Game Over, AI score: {}".format(str(state.score)))
+    print("Game Over, total round: {}".format(str(count)))
 
 if __name__ == "__main__":
     #randomPlay()
