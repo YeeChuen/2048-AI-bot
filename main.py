@@ -13,10 +13,12 @@ from MonteCarlo import *
 #For user to play 2048/test implementation
 # taken from Matt's Game2048 file. 
 def userplay():
+    count = 0
     state = State2048(boardSize=4)
     while state.checkGameOver() is False:
         #os.system('cls||clear')
         print("")
+        print("====== new board (round {})=====".format(str(count)))
         state.print()
         print("current score: {}".format(str(state.score)))
         print("")
@@ -37,6 +39,7 @@ def userplay():
 
             if newState is not None:
                 state = newState
+        count+=1
 
     state.print()
     print("Game Over, you scored")
