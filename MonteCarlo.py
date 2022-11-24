@@ -11,6 +11,14 @@ import utils
 import sys
 import time
 
+def max_index(list):
+    max=0
+    maxindex = -1
+    for i in range(len(list)):
+        if list[i]>max:
+            maxindex = i
+            max = list[i]
+    return maxindex
 # ______________________________________________________________________________
 # MCT node
 class node:
@@ -21,7 +29,8 @@ class node:
         self.state2048 = state2048
         self.hashvalue = state2048.__hash__()   # hashvalue to name the node <node hashvalue>
         self.score = state2048.score
-        self.high_score_action = {}
+        self.high_score_action = [0,0,0,0]
+        self.child_from_action = [0,0,0,0]
         #self.simulation_count = 0
         self.depth = depth      # depth to limit the search depth (speed up search)
         self.child = {}         # child uses set to prevent duplicate
@@ -30,6 +39,25 @@ class node:
     # backpropagation should return the parent node with updated score
     # the high score action should be based on average score for that move. 
     def backprop(self):
+        if self.parent: #check if the node has parent
+            if sum(self.high_score_action) != 0:    #check if current node already has a highscore from child node
+                                                        #if yes, use that to update parent node
+                if self.parent.high_score_action[self.priorAction] != 0:
+                    score_total = self.parent.high_score_action[self.priorAction] + max(self.high_score_action)
+                    prev_total = self.parent.child_from_action[self.priorAction]
+                    self.parent.high_score_action[self.priorAction] = score_total/prev_total
+                else:
+                    self.parent.high_score_action[self.priorAction] = max(self.high_score_action)
+            else:
+                if self.parent.high_score_action[self.priorAction] != 0:
+                    score_total = self.parent.high_score_action[self.priorAction] + self.score
+                    prev_total = self.parent.child_from_action[self.priorAction]
+                    self.parent.high_score_action[self.priorAction] = score_total/prev_total
+                else:
+                    self.parent.high_score_action[self.priorAction] = self.score
+            return self.parent
+        return None
+        '''
         if self.parent: #check if the node has parent
             if self.high_score_action:  #check if current node already has a highscore from child node
                                         #if yes, use that to update parent node
@@ -54,9 +82,11 @@ class node:
                     self.parent.high_score_action[self.score]=self.priorAction
             return self.parent
         return None
+        '''
     
     # addchild 
     def addchild(self, action):
+        self.child_from_action[action]+=1
         childstate = self.state2048.move(action)
         childnode = node(parent = self, state2048=childstate, depth=self.depth+1, priorAction=action)
         # check the key(action) for child exists
@@ -79,6 +109,7 @@ class node:
         print("node depth: {}".format(str(self.depth)))
         print("node score: {}".format(str(self.score)))
         print("node possible highest score: {}".format(str(self.high_score_action)))
+        print("node child from action: {}".format(str(self.child_from_action)))
         #print("node simulation count: {}".format(str(self.simulation_count)))
         print("node state:")
         if self.state2048:
@@ -148,7 +179,7 @@ class MCTS:
                 currnode = currnode.backprop()   
             #TOBE DELETED  
             #currnode.print()
-        return int(currnode.high_score_action[list(currnode.high_score_action.keys())[0]])
+        return max_index(self.currnode.high_score_action)
         
 
 

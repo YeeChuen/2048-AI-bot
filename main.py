@@ -55,6 +55,9 @@ def MCTSplay():
     monte_carlo = MCTS(state, no_simulation=50, depth = 50)
     monte_carlo.print()
 
+    #TOBE DELETED
+    #onetime = False
+    # state.checkGameOver()
     while state.checkGameOver() is False:
         monte_carlo.currnode.state2048.print()
         print("====== Simulation start =====")
@@ -62,11 +65,12 @@ def MCTSplay():
         print("====== Simulation end =====")
         monte_carlo.update_currnode(action)
         state = monte_carlo.currnode.state2048
+        #TOBE DELETED
+        #onetime = True
 
     state.print()
     print("Game Over, AI scored")
     print(state.score)
-
 
 if __name__ == "__main__":
     #randomPlay()
