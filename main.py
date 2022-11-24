@@ -62,9 +62,9 @@ def MCTSplay():
     count=1
     # state.checkGameOver()
     while state.checkGameOver() is False:
-        print("====== new board (round {})=====".format(str(count)))
-        monte_carlo.currnode.state2048.print()
-        print("current board score: {}".format(str(state.score)))
+        #print("====== new board (round {})=====".format(str(count)))
+        #monte_carlo.currnode.state2048.print()
+        #print("current board score: {}".format(str(state.score)))
         action = monte_carlo.simulation()
         monte_carlo.update_currnode(action)
         state = monte_carlo.currnode.state2048
@@ -75,11 +75,21 @@ def MCTSplay():
     state.print()
     print("Game Over, AI score: {}".format(str(state.score)))
     print("Game Over, total round: {}".format(str(count)))
+    return [int(state.score), int(count)]
 
 if __name__ == "__main__":
     #randomPlay()
     #userplay()
-    MCTSplay()
+    report_countlist = []
+    report_scorelist = []
+    for _ in range(10):
+        list = MCTSplay()
+        report_scorelist.append(list[0])
+        report_countlist.append(list[1])
+    
+    print("MCTS result on average out of 10 games")
+    print("average score: {}".format(int(sum(report_scorelist)/len(report_scorelist))))
+    print("average round: {}".format(int(sum(report_countlist)/len(report_countlist))))
 
 
 #____________________________________________________________________________________
