@@ -10,15 +10,15 @@ import numpy as np
 import utils
 import sys
 import time
+import random
 
 def max_index(list):
-    max=0
-    maxindex = -1
-    for i in range(len(list)):
-        if list[i]>max:
-            maxindex = i
-            max = list[i]
-    return maxindex
+    maxnum = max(list)
+    list_idx = []
+    for x in range(len(list)):
+        if list[x] == maxnum:
+            list_idx.append(x)
+    return np.random.choice(list_idx)
 # ______________________________________________________________________________
 # MCT node
 class node:
@@ -28,7 +28,7 @@ class node:
         self.parent = parent    # parent is a node
         self.state2048 = state2048
         self.hashvalue = state2048.__hash__()   # hashvalue to name the node <node hashvalue>
-        self.score = state2048.score
+        self.score = state2048.score #basically h1(heuristic 1)
         self.high_score_action = [0,0,0,0]
         self.child_from_action = [0,0,0,0]
         #self.simulation_count = 0
@@ -42,17 +42,30 @@ class node:
         if self.parent: #check if the node has parent
             if sum(self.high_score_action) != 0:    #check if current node already has a highscore from child node
                                                         #if yes, use that to update parent node
+                #TOBE DELETED
+                #print("sum satisfied in backprop")
+
                 if self.parent.high_score_action[self.priorAction] != 0:
-                    score_total = self.parent.high_score_action[self.priorAction] + max(self.high_score_action)
-                    prev_total = self.parent.child_from_action[self.priorAction]
-                    self.parent.high_score_action[self.priorAction] = score_total/prev_total
+                    #TOBE DELETED
+                    #print("parent in that action has existing")
+
+                    #score_total = self.parent.high_score_action[self.priorAction] + max(self.high_score_action)
+                    #prev_total = self.parent.child_from_action[self.priorAction]
+                    self.parent.high_score_action[self.priorAction] = max(max(self.high_score_action), self.parent.high_score_action[self.priorAction])
                 else:
+                    #TOBE DELETED
+                    #print("parent in that action empty")
+
                     self.parent.high_score_action[self.priorAction] = max(self.high_score_action)
             else:
+                #TOBE DELETED
+                #print("do not have previous child score")
+
                 if self.parent.high_score_action[self.priorAction] != 0:
-                    score_total = self.parent.high_score_action[self.priorAction] + self.score
-                    prev_total = self.parent.child_from_action[self.priorAction]
-                    self.parent.high_score_action[self.priorAction] = score_total/prev_total
+                    #score_total = self.parent.high_score_action[self.priorAction] + self.score
+                    #prev_total = self.parent.child_from_action[self.priorAction]
+                    self.parent.high_score_action[self.priorAction] = max(max(self.high_score_action), self.parent.high_score_action[self.priorAction])
+                
                 else:
                     self.parent.high_score_action[self.priorAction] = self.score
             return self.parent
@@ -143,6 +156,16 @@ class MCTS:
         self.search_depth+=1
         self.currnode = self.currnode.addchild(action)
 
+    def greedy_action(self, node, actionlist):
+        state = node.state2048
+        action_score = [0,0,0,0]
+        for action in actionlist:
+            newstate = state.move(action)
+            action_score[action] = newstate.score #score is h1 (heuristic 1)
+        # if all action the same, choose the a random action
+        if sum(action_score) == 0:
+            return np.random.choice(actionlist)
+        return max_index(action_score)
 
     def simulation(self):
         currnode = self.currnode
@@ -154,19 +177,25 @@ class MCTS:
             4. for n+1 simulation, check if the same node with the same board already existed as a child,
             5. if not, create a new child
             '''
-
             while currnode.depth < self.search_depth:
+                action = -1
                 action_list = currnode.state2048.actions()
-                #TOBE DELETED
-                #print(action_list)
                 if not action_list:
                     break
-                random_action =np.random.choice(action_list)
-                #TOBE DELETED
-                #print("random action chosen: {}".format(str(random_action)))
-                #print("TO BE IMPLEMENTED")
 
-                childnode = currnode.addchild(random_action)
+                #for first child always choose greedy option
+                if sum(currnode.child_from_action) == 0:
+                    action = self.greedy_action(currnode, action_list)
+                #after first child, 50/50 greedy or not
+                else:
+                #choose greedy 
+                    if random.random() < .5:
+                        action = self.greedy_action(currnode, action_list)
+                #not greedy, choose at random
+                    else:
+                        action =np.random.choice(action_list)
+
+                childnode = currnode.addchild(action)
 
                 currnode = childnode
             
@@ -174,17 +203,17 @@ class MCTS:
             # change this to back to current node
             while currnode is not self.currnode:
                 #TOBE DELETED
-                currnode.print()
+                #currnode.print()
 
                 currnode = currnode.backprop()   
             #TOBE DELETED  
-            currnode.print()
+            #currnode.print()
         return max_index(self.currnode.high_score_action)
         
 
 
 # ______________________________________________________________________________
-# reference code
+# reference code starts here
 num2char = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h", 8: "i", 9: "j", 10: "k", 11: "l", 12: "m",
             13: "n", 14: "o", 15: "p", 16: "q", 17: "r", 18: "s", 19: "t", 20: "u"}
 
