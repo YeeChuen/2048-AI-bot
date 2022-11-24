@@ -51,24 +51,36 @@ class State2048:
         if direction == 0:
             res = self.moveUp(self.board)
             if np.array_equal(self.board, res[0]):
+                #TOBE DELETED
+                #print("move None 0")
+
                 return None
             return State2048(res[0], self.score + res[1], self, self.boardSize)
 
         if direction == 1:
             res = self.moveRight(self.board)
             if np.array_equal(self.board, res[0]):
+                #TOBE DELETED
+                #print("move None 1")
+
                 return None
             return State2048(res[0], self.score + res[1], self, self.boardSize)
 
         if direction == 2:
             res = self.moveDown(self.board)
             if np.array_equal(self.board, res[0]):
+                #TOBE DELETED
+                #print("move None 2")
+
                 return None
             return State2048(res[0], self.score + res[1], self, self.boardSize)
 
         if direction == 3:
             res = self.moveLeft(self.board)
             if np.array_equal(self.board, res[0]):
+                #TOBE DELETED
+                #print("move None 3")
+
                 return None
             return State2048(res[0], self.score + res[1], self, self.boardSize)
 

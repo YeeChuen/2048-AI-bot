@@ -28,12 +28,14 @@ class node:
         self.priorAction = priorAction # what action leads to this node?
 
     # backpropagation should return the parent node with updated score
+    # the high score action should be based on average score for that move. 
     def backprop(self):
-        if self.parent:
-            if self.high_score_action:
+        if self.parent: #check if the node has parent
+            if self.high_score_action:  #check if current node already has a highscore from child node
+                                        #if yes, use that to update parent node
                 self_keylist = list(self.high_score_action.keys())
                 self_key=self_keylist[0]
-                if self.parent.high_score_action:
+                if self.parent.high_score_action:   #check if the parent already has other highscore
                     keylist = list(self.parent.high_score_action.keys())
                     key=keylist[0]
                     if self_key > key:
@@ -59,6 +61,8 @@ class node:
         childnode = node(parent = self, state2048=childstate, depth=self.depth+1, priorAction=action)
         # check the key(action) for child exists
         if action in self.child:
+            # check if there is this same child?
+            # not required since value dont have duplicate
             self.child[action].add(childnode)
         else:
             self.child[action]={childnode}
@@ -93,20 +97,24 @@ class node:
 class MCTS:
     def __init__(self, state2048, no_simulation=100, depth = 50):
         self.node_state = state2048 # this could be redundant
-        self.maxscore = 0       # this could be redundant
+        #self.maxscore = 0       # this could be redundant
         self.no_simulation = no_simulation
         self.search_depth = depth
+        self.currnode = node(state2048=self.node_state)
 
     def print(self):
         print("-----------------MCTS information------------------")
-        print("MCTS node state: {}".format(str(self.node_state)))
-        print("MCTS max score: {}".format(str(self.maxscore)))
         print("MCTS number of simulation: {}".format(str(self.no_simulation)))
         print("MCTS search depth: {}".format(str(self.search_depth)))
         print("---------------------------------------------------")
 
+    def update_currnode(self, action):
+        self.search_depth+=1
+        self.currnode = self.currnode.addchild(action)
+
+
     def simulation(self):
-        rootnode = node(state2048=self.node_state)
+        currnode = self.currnode
         for _ in range(self.no_simulation):
             '''
             1. check all available action of the node, randomly pick one
@@ -115,13 +123,13 @@ class MCTS:
             4. for n+1 simulation, check if the same node with the same board already existed as a child,
             5. if not, create a new child
             '''
-            currnode = rootnode
 
             while currnode.depth < self.search_depth:
                 action_list = currnode.state2048.actions()
                 #TOBE DELETED
-                print(action_list)
-
+                #print(action_list)
+                if not action_list:
+                    break
                 random_action =np.random.choice(action_list)
                 #TOBE DELETED
                 #print("random action chosen: {}".format(str(random_action)))
@@ -131,10 +139,17 @@ class MCTS:
 
                 currnode = childnode
             
-            while currnode.parent:
-                currnode.print()
+            # back prop conditional here always bring node back to the parent
+            # change this to back to current node
+            while currnode is not self.currnode:
+                #TOBE DELETED
+                #currnode.print()
+
                 currnode = currnode.backprop()   
-            currnode.print()
+            #TOBE DELETED  
+            #currnode.print()
+        return int(currnode.high_score_action[list(currnode.high_score_action.keys())[0]])
+        
 
 
 # ______________________________________________________________________________
