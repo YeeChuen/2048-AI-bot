@@ -51,11 +51,11 @@ def MCTSplay():
     movetranslate={0:"up", 1:"right", 2:"down", 3:"left"}
 
     state = State2048(boardSize=4)
-    monte_carlo = MCTS(state, no_simulation=100, depth = 3)
+    monte_carlo = MCTS(state, no_simulation=500, depth = 3)
     monte_carlo.print()
 
     #TOBE DELETED
-    #onetime = False
+    onetime = False
     # state.checkGameOver()
     while state.checkGameOver() is False:
         print("====== new board =====")
@@ -65,7 +65,7 @@ def MCTSplay():
         monte_carlo.update_currnode(action)
         state = monte_carlo.currnode.state2048
         #TOBE DELETED
-        #onetime = True
+        onetime = True
 
     state.print()
     print("Game Over, AI scored")
