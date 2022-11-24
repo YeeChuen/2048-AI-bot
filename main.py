@@ -13,10 +13,12 @@ from MonteCarlo import *
 #For user to play 2048/test implementation
 # taken from Matt's Game2048 file. 
 def userplay():
+    count = 0
     state = State2048(boardSize=4)
     while state.checkGameOver() is False:
         #os.system('cls||clear')
         print("")
+        print("====== new board (round {})=====".format(str(count)))
         state.print()
         print("current score: {}".format(str(state.score)))
         print("")
@@ -37,6 +39,7 @@ def userplay():
 
             if newState is not None:
                 state = newState
+        count+=1
 
     state.print()
     print("Game Over, you scored")
@@ -51,30 +54,42 @@ def MCTSplay():
     movetranslate={0:"up", 1:"right", 2:"down", 3:"left"}
 
     state = State2048(boardSize=4)
-    monte_carlo = MCTS(state, no_simulation=500, depth = 3)
+    monte_carlo = MCTS(state, no_simulation=500, depth = 6)
     monte_carlo.print()
 
     #TOBE DELETED
     onetime = False
+    count=1
     # state.checkGameOver()
     while state.checkGameOver() is False:
-        print("====== new board =====")
-        monte_carlo.currnode.state2048.print()
-        print("current board score: {}".format(str(state.score)))
+        #print("====== new board (round {})=====".format(str(count)))
+        #monte_carlo.currnode.state2048.print()
+        #print("current board score: {}".format(str(state.score)))
         action = monte_carlo.simulation()
         monte_carlo.update_currnode(action)
         state = monte_carlo.currnode.state2048
         #TOBE DELETED
         onetime = True
+        count+=1
 
     state.print()
-    print("Game Over, AI scored")
-    print(state.score)
+    print("Game Over, AI score: {}".format(str(state.score)))
+    print("Game Over, total round: {}".format(str(count)))
+    return [int(state.score), int(count)]
 
 if __name__ == "__main__":
     #randomPlay()
     #userplay()
-    MCTSplay()
+    report_countlist = []
+    report_scorelist = []
+    for _ in range(10):
+        list = MCTSplay()
+        report_scorelist.append(list[0])
+        report_countlist.append(list[1])
+    
+    print("MCTS result on average out of 10 games")
+    print("average score: {}".format(int(sum(report_scorelist)/len(report_scorelist))))
+    print("average round: {}".format(int(sum(report_countlist)/len(report_countlist))))
 
 
 #____________________________________________________________________________________
