@@ -174,11 +174,11 @@ class MCTS:
             # change this to back to current node
             while currnode is not self.currnode:
                 #TOBE DELETED
-                #currnode.print()
+                currnode.print()
 
                 currnode = currnode.backprop()   
             #TOBE DELETED  
-            #currnode.print()
+            currnode.print()
         return max_index(self.currnode.high_score_action)
         
 

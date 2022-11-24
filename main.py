@@ -4,7 +4,6 @@
 # Description: main file to run 2048
 # Reference: none
 
-from search import *
 from Game2048 import *
 from MonteCarlo import *
 
@@ -56,9 +55,9 @@ def MCTSplay():
     monte_carlo.print()
 
     #TOBE DELETED
-    #onetime = False
+    onetime = False
     # state.checkGameOver()
-    while state.checkGameOver() is False:
+    while onetime is False:
         monte_carlo.currnode.state2048.print()
         print("====== Simulation start =====")
         action = monte_carlo.simulation()
@@ -66,7 +65,7 @@ def MCTSplay():
         monte_carlo.update_currnode(action)
         state = monte_carlo.currnode.state2048
         #TOBE DELETED
-        #onetime = True
+        onetime = True
 
     state.print()
     print("Game Over, AI scored")
