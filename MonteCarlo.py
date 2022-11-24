@@ -96,7 +96,24 @@ class node:
             return self.parent
         return None
         '''
-    
+
+    def count_child(self):
+        for key in self.child:
+            print("Number of Child in from action {}: {}".format(str(key), str(len(self.child[key]))))
+
+    def exists(self, node, action):
+        for childnode in self.child[action]:
+            if node.hashvalue == childnode.hashvalue:
+                return True
+        return False
+
+    def get_samechild(self, node, action):
+        for childnode in self.child[action]:
+            if node.hashvalue == childnode.hashvalue:
+                return childnode
+        print("that childnode does not exist")
+        return None
+
     # addchild 
     def addchild(self, action):
         self.child_from_action[action]+=1
@@ -105,11 +122,12 @@ class node:
         # check the key(action) for child exists
         if action in self.child:
             # check if there is this same child?
-            # not required since value dont have duplicate
-            self.child[action].add(childnode)
+            if self.exists(childnode, action) is True:
+                return self.get_samechild(childnode, action)
+            else:
+                self.child[action].add(childnode)
         else:
             self.child[action]={childnode}
-
         return childnode
 
     # print node information
@@ -123,6 +141,7 @@ class node:
         print("node score: {}".format(str(self.score)))
         print("node possible highest score: {}".format(str(self.high_score_action)))
         print("node child from action: {}".format(str(self.child_from_action)))
+        self.count_child()
         #print("node simulation count: {}".format(str(self.simulation_count)))
         print("node state:")
         if self.state2048:
@@ -189,7 +208,7 @@ class MCTS:
                 #after first child, 50/50 greedy or not
                 else:
                 #choose greedy 
-                    if random.random() < .5:
+                    if random.random() < .2:
                         action = self.greedy_action(currnode, action_list)
                 #not greedy, choose at random
                     else:
