@@ -87,6 +87,7 @@ if __name__ == "__main__":
         report_scorelist.append(list[0])
         report_countlist.append(list[1])
     
+    print("_________________________________________")
     print("MCTS result on average out of 10 games")
     print("average score: {}".format(int(sum(report_scorelist)/len(report_scorelist))))
     print("average round: {}".format(int(sum(report_countlist)/len(report_countlist))))
