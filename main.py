@@ -77,72 +77,87 @@ def MCTSplay():
     print("Game Over, total round: {}".format(str(count)))
     return [int(state.score), int(count)]
 
-if __name__ == "__main__":
-    #randomPlay()
-    #userplay()
+# ______________________________________________________________________________
+# Random play
+# a random bot that picks action on random
+def randomplay():
+
+    state = State2048(boardSize=4)
+
+    #TOBE DELETED
+    onetime = False
+    count=1
+    # state.checkGameOver()
+    while state.checkGameOver() is False:
+        #print("====== new board (round {})=====".format(str(count)))
+        #monte_carlo.currnode.state2048.print()
+        #print("current board score: {}".format(str(state.score)))
+        action_list = state.actions()
+        action = np.random.choice(action_list)
+        state = state.move(action)
+        #TOBE DELETED
+        onetime = True
+        count+=1
+
+    state.print()
+    print("Game Over, AI score: {}".format(str(state.score)))
+    print("Game Over, total round: {}".format(str(count)))
+    return [int(state.score), int(count)]
+
+# ______________________________________________________________________________
+# Greedy play
+# Greedy bot that always chooses the greedy action to maximize score
+def greedyplay():
+
+    state = State2048(boardSize=4)
+    monte_carlo = MCTS(state, no_simulation=500, depth = 6)
+    monte_carlo.print()
+
+    #TOBE DELETED
+    onetime = False
+    count=1
+    # state.checkGameOver()
+    while state.checkGameOver() is False:
+        #print("====== new board (round {})=====".format(str(count)))
+        #monte_carlo.currnode.state2048.print()
+        #print("current board score: {}".format(str(state.score)))
+        action = monte_carlo.greedy_action(monte_carlo.currnode, monte_carlo.currnode.state2048.actions())
+        monte_carlo.update_currnode(action)
+        state = monte_carlo.currnode.state2048
+        #TOBE DELETED
+        onetime = True
+        count+=1
+
+    state.print()
+    print("Game Over, AI score: {}".format(str(state.score)))
+    print("Game Over, total round: {}".format(str(count)))
+    return [int(state.score), int(count)]
+
+# ______________________________________________________________________________
+# Report function
+# function that reports the result based on a sample size
+def report_result(sample_size, func, bot_type):
     report_countlist = []
     report_scorelist = []
-    for _ in range(10):
-        list = MCTSplay()
+    for _ in range(sample_size):
+        list = func()
         report_scorelist.append(list[0])
         report_countlist.append(list[1])
     
     print("_________________________________________")
-    print("MCTS result on average out of 10 games")
+    print("{} result on average out of {} games".format(bot_type, str(sample_size)))
     print("average score: {}".format(int(sum(report_scorelist)/len(report_scorelist))))
     print("average round: {}".format(int(sum(report_countlist)/len(report_countlist))))
 
+# ______________________________________________________________________________
+# Main
+if __name__ == "__main__":
+    #Random bot
+    report_result(10, randomplay, "Random Bot")
 
-#____________________________________________________________________________________
-#TOBE DELETED Section
-#Test Code
+    #Greedy bot
+    report_result(10, greedyplay, "Greedy Bot")
 
-#Test node class (add child, traversal, backprop, etc)
-    '''
-    #test code
-    newstate = State2048(boardSize=4)
-    #print(newstate.__hash__())
-    #newstate.print()
-    rootnode = node(state2048=newstate)
-    
-    # creating first child for root
-    childnode1 = rootnode.addchild(0)
-
-    # creating second child for root
-    childnode2 = rootnode.addchild(1)
-
-    # creating child for child1
-    leafnode1 = childnode1.addchild(1)
-
-    # creating child for child2
-    leafnode2 = childnode2.addchild(1)
-
-    #add score for leafnode
-    leafnode1.score = 100
-    leafnode2.score = 999
-
-    # creating third child for root
-    childnode3 = rootnode.addchild(0)
-
-    currnode = leafnode1
-    while currnode.parent:
-        print("run")
-        currnode = currnode.backprop()    
-
-    currnode = leafnode2
-    while currnode.parent:
-        print("run")
-        currnode = currnode.backprop()
-
-    print("")
-    print("CURRENT NODE INFORMATION, should be the root with score")
-    currnode.print()
-    rootnode.print()
-    childnode1.print()
-    childnode2.print()
-    childnode3.print()
-    leafnode1.print()
-    leafnode2.print()
-
-    '''
+    #MCTS bot
+    report_result(10, MCTSplay, "MCTS Bot")
 
