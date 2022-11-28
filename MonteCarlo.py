@@ -49,8 +49,12 @@ class node:
                     #TOBE DELETED
                     #print("parent in that action has existing")
 
-                    #score_total = self.parent.high_score_action[self.priorAction] + max(self.high_score_action)
-                    #prev_total = self.parent.child_from_action[self.priorAction]
+                    # below is code for average
+                    prev_total = self.parent.child_from_action[self.priorAction]
+                    score_total = self.parent.high_score_action[self.priorAction]*(prev_total-1) + max(self.high_score_action)
+                    self.parent.high_score_action[self.priorAction] =score_total/prev_total
+                    
+                    # below is code for max
                     self.parent.high_score_action[self.priorAction] = max(max(self.high_score_action), self.parent.high_score_action[self.priorAction])
                 else:
                     #TOBE DELETED
@@ -62,9 +66,13 @@ class node:
                 #print("do not have previous child score")
 
                 if self.parent.high_score_action[self.priorAction] != 0:
-                    #score_total = self.parent.high_score_action[self.priorAction] + self.score
-                    #prev_total = self.parent.child_from_action[self.priorAction]
-                    self.parent.high_score_action[self.priorAction] = max(max(self.high_score_action), self.parent.high_score_action[self.priorAction])
+                    # below is code for average
+                    prev_total = self.parent.child_from_action[self.priorAction]
+                    score_total = self.parent.high_score_action[self.priorAction]*(prev_total-1) + self.score
+                    self.parent.high_score_action[self.priorAction] =score_total/prev_total
+                    
+                    # below is code for average
+                    #self.parent.high_score_action[self.priorAction] = max(max(self.high_score_action), self.parent.high_score_action[self.priorAction])
                 
                 else:
                     self.parent.high_score_action[self.priorAction] = self.score
