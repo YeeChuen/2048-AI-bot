@@ -50,12 +50,13 @@ def userplay():
 # implementation of MCTS to 2048
 
 def MCTSplay():
+    print("............................. MCTS play()")
     #up:0, right:1, down:2, left:3
     movetranslate={0:"up", 1:"right", 2:"down", 3:"left"}
 
     state = State2048(boardSize=4)
     monte_carlo = MCTS(state, no_simulation=500, depth = 6)
-    monte_carlo.print()
+    #monte_carlo.print()
 
     #TOBE DELETED
     onetime = False
@@ -75,15 +76,16 @@ def MCTSplay():
     state.print()
     print("Game Over, AI score: {}".format(str(state.score)))
     print("Game Over, total round: {}".format(str(count)))
+    print(".............................")
     return [int(state.score), int(count)]
 
 # ______________________________________________________________________________
 # Random play
 # a random bot that picks action on random
 def randomplay():
+    print("............................. random play()")
 
     state = State2048(boardSize=4)
-
     #TOBE DELETED
     onetime = False
     count=1
@@ -102,16 +104,17 @@ def randomplay():
     state.print()
     print("Game Over, AI score: {}".format(str(state.score)))
     print("Game Over, total round: {}".format(str(count)))
+    print(".............................")
     return [int(state.score), int(count)]
 
 # ______________________________________________________________________________
 # Greedy play
 # Greedy bot that always chooses the greedy action to maximize score
 def greedyplay():
+    print("............................. greedy play()")
 
     state = State2048(boardSize=4)
     monte_carlo = MCTS(state, no_simulation=500, depth = 6)
-    monte_carlo.print()
 
     #TOBE DELETED
     onetime = False
@@ -131,12 +134,13 @@ def greedyplay():
     state.print()
     print("Game Over, AI score: {}".format(str(state.score)))
     print("Game Over, total round: {}".format(str(count)))
+    print(".............................")
     return [int(state.score), int(count)]
-
 # ______________________________________________________________________________
 # Report function
 # function that reports the result based on a sample size
-def report_result(sample_size, func, bot_type):
+def report_result(sample_size, func, bot_type):  
+    print("----------------- {} sample simulation starts -----------------".format(bot_type))
     report_countlist = []
     report_scorelist = []
     for _ in range(sample_size):
@@ -148,6 +152,7 @@ def report_result(sample_size, func, bot_type):
     print("{} result on average out of {} games".format(bot_type, str(sample_size)))
     print("average score: {}".format(int(sum(report_scorelist)/len(report_scorelist))))
     print("average round: {}".format(int(sum(report_countlist)/len(report_countlist))))
+    print("------------------ {} sample simulation end ------------------".format(bot_type))
 
 # ______________________________________________________________________________
 # Main
