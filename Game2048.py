@@ -1,3 +1,4 @@
+# Author: Matt Rayman
 # possible game problem, spawn location incorrect
 
 import sys
