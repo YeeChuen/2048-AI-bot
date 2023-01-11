@@ -1,3 +1,3 @@
 # 2048 AI bot
 
-the problem the project will address, a set of goals for the project, the overall objectives for the project, as well as a project plan that describes the activities the members will undertake.
+2048 AI bot aims to be an AI bot that is able to perform well in the 2048 game. 2048 game is a 4x4 board game, where "2"(90% chance) and "4"(10% chance) is generated randomly from empty cells each round. Each round, player choose to slide cells into a direction and two matching cell number merge into one cell (new number is the addition of the two matching number). the objective of the game is to reach the number "2048". 2048 game environment is built in python. 2048 AI bot model is built on Monte Carlo Tree Search with implementation of Deep Reinforced Learning as its heuristics. 
